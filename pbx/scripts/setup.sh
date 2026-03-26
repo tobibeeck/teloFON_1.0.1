@@ -40,6 +40,21 @@ if [[ -f ".env" ]]; then
     exit 1
 fi
 
+# 1b. Python Dependencies
+echo -e "\n[1.1/4] Checking Python Dependencies..."
+if ! command -v pip3 &> /dev/null; then
+    echo -e "pip3 not found. Installing..."
+    apt update && apt install python3-pip -y
+fi
+
+echo -e "Installing bcrypt..."
+if pip3 install bcrypt --break-system-packages; then
+    echo -e "${GREEN}Python dependencies installed successfully.${NC}"
+else
+    echo -e "${RED}Error: Failed to install Python dependencies.${NC}"
+    exit 1
+fi
+
 # 2. Loki Logging Plugin
 echo -e "\n[2/4] Checking Loki Logging Plugin..."
 if docker plugin ls | grep -q "loki"; then
