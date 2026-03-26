@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PBX Setup Wizard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f0f0f;
+            --card-bg: #1e1e1e;
+            --text-color: #e8eaed;
+            --accent-color: #1a73e8;
+            --error-color: #f28b82;
+            --success-color: #81c995;
+            --warning-color: #fdd663;
+            --input-bg: #2d2d2d;
+            --transition-speed: 350ms;
+            --bezier: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Google Sans', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Header & Progress Bar */
+        header {
+            width: 100%;
+            padding: 24px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--accent-color), #8ab4f8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .step-indicator {
+            font-size: 14px;
+            color: #9aa0a6;
+        }
+
+        .progress-bar-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--accent-color);
+            width: 0%;
+            transition: width var(--transition-speed) var(--bezier);
+            box-shadow: 0 0 10px var(--accent-color);
+        }
+
+        /* Container & Steps */
+        main {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            height: calc(100vh - 120px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .step {
+            position: absolute;
+            width: 100%;
+            padding: 40px;
+            background: var(--card-bg);
+            border-radius: 28px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            opacity: 0;
+            transform: translateX(100px);
+            pointer-events: none;
+            transition: all var(--transition-speed) var(--bezier);
+        }
+
+        .step.active {
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: all;
+        }
+
+        .step.exit {
+            opacity: 0;
+            transform: translateX(-100px);
+        }
+
+        h1 { font-size: 32px; font-weight: 500; }
+        p { color: #9aa0a6; line-height: 1.5; }
+
+        /* Welcome Icon Animation */
+        .welcome-icon {
+            width: 80px; height: 80px;
+            background: var(--accent-color);
+            border-radius: 20px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse 3s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(26, 115, 232, 0.4); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 20px rgba(26, 115, 232, 0); }
+            100% { transform: scale(1); }
+        }
+
+        .list-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        .list-item.show {
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 400ms var(--bezier);
+        }
+
+        .dot { width: 8px; height: 8px; background: var(--accent-color); border-radius: 50%; }
+
+        /* Form Elements */
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            position: relative;
+        }
+
+        label { font-size: 14px; color: var(--accent-color); font-weight: 500; margin-left: 4px; }
+
+        input {
+            background: var(--input-bg);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 16px;
+            color: var(--text-color);
+            font-family: inherit;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        input:focus {
+            border-color: var(--accent-color);
+            background: #252627;
+        }
+
+        .dns-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            min-height: 24px;
+        }
+
+        .spin { animation: spin 1s linear infinite; }
+        @keyframes spin { from {transform: rotate(0deg);} to {transform: rotate(360deg);} }
+
+        /* Password Rules */
+        .password-rules {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            font-size: 13px;
+        }
+
+        .rule { display: flex; align-items: center; gap: 6px; color: #5f6368; transition: color 0.3s; }
+        .rule.ok { color: var(--success-color); }
+        .rule.ok::before { content: "✓"; font-weight: bold; }
+
+        .strength-bar {
+            height: 4px;
+            background: #3c4043;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: -8px;
+        }
+
+        .strength-fill {
+            height: 100%;
+            width: 0%;
+            transition: all 0.3s;
+        }
+
+        /* Progress Ring */
+        .progress-ring-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .ring {
+            width: 120px;
+            height: 120px;
+        }
+
+        .ring-bg { fill: none; stroke: #3c4043; stroke-width: 8; }
+        .ring-fill {
+            fill: none;
+            stroke: var(--accent-color);
+            stroke-width: 8;
+            stroke-linecap: round;
+            stroke-dasharray: 314.159;
+            stroke-dashoffset: 314.159;
+            transition: stroke-dashoffset 0.8s var(--bezier);
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+
+        #log-container {
+            background: #000;
+            border-radius: 12px;
+            padding: 16px;
+            height: 160px;
+            overflow-y: auto;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .log-entry {
+            opacity: 0;
+            transform: translateY(5px);
+            animation: fadeInLog 0.3s forwards;
+        }
+
+        @keyframes fadeInLog { to { opacity: 1; transform: translateY(0); } }
+
+        /* Finish Card */
+        .finish-card {
+            background: rgba(45, 45, 45, 0.5);
+            padding: 20px;
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        .val { color: #fff; font-weight: 500; font-family: monospace; }
+
+        .copy-btn {
+            background: transparent;
+            border: none;
+            color: var(--accent-color);
+            cursor: pointer;
+            font-size: 18px;
+            padding: 4px;
+        }
+
+        /* Buttons */
+        .btn-container { display: flex; justify-content: flex-end; margin-top: 16px; }
+
+        button.primary {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 24px;
+            font-family: inherit;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        button.primary:hover:not(:disabled) {
+            background: #1967d2;
+            box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
+        }
+
+        button.primary:active { transform: scale(0.97); }
+
+        button.primary:disabled {
+            background: #3c4043;
+            color: #80868b;
+            cursor: not-allowed;
+        }
+
+        /* Checkmark Animation */
+        .checkmark-svg { width: 80px; height: 80px; align-self: center; }
+        .checkmark-circle { stroke: var(--success-color); stroke-width: 2; stroke-dasharray: 166; stroke-dashoffset: 166; animation: draw 0.6s fill forwards; }
+        .checkmark-check { stroke: var(--success-color); stroke-width: 4; stroke-dasharray: 48; stroke-dashoffset: 48; animation: draw 0.3s 0.6s forwards; }
+
+        @keyframes draw { to { stroke-dashoffset: 0; } }
+
+    </style>
+</head>
+<body>
+    <div class="progress-bar-container">
+        <div class="progress-bar-fill" id="progressBar"></div>
+    </div>
+
+    <header>
+        <div class="logo">PBX</div>
+        <div class="step-indicator" id="stepIndicator">Schritt 1 von 5</div>
+    </header>
+
+    <main>
+        <!-- Step 1: Welcome -->
+        <div class="step active" id="step1">
+            <div class="welcome-icon">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="white">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                </svg>
+            </div>
+            <h1>PBX Setup</h1>
+            <p>Willkommen. Dieser Wizard richtet deine PBX Anlage ein. Der Vorgang dauert ca. 2 Minuten.</p>
+            <div id="welcomeList">
+                <div class="list-item"><div class="dot"></div>SSL Zertifikat wird automatisch ausgestellt</div>
+                <div class="list-item"><div class="dot"></div>Alle Secrets werden sicher generiert</div>
+                <div class="list-item"><div class="dot"></div>FreeSwitch wird konfiguriert</div>
+                <div class="list-item"><div class="dot"></div>Admin Nebenstelle 000 wird angelegt</div>
+            </div>
+            <div class="btn-container">
+                <button class="primary" onclick="nextStep(2)">Setup starten</button>
+            </div>
+        </div>
+
+        <!-- Step 2: Domain -->
+        <div class="step" id="step2">
+            <h1>Domain & Netzwerk</h1>
+            <p>Der FQDN wird für das SSL Zertifikat und die SIP Konfiguration verwendet.</p>
+            <div class="input-group">
+                <label>FQDN</label>
+                <input type="text" id="fqdnInput" placeholder="pbx.firma.at" autocomplete="off">
+                <div class="dns-status" id="dnsStatus"></div>
+            </div>
+            <div class="btn-container">
+                <button class="primary" id="btn2" onclick="nextStep(3)" disabled>Weiter</button>
+            </div>
+        </div>
+
+        <!-- Step 3: Admin -->
+        <div class="step" id="step3">
+            <h1>Admin Account</h1>
+            <p>Der Admin Account ist gleichzeitig die interne Nebenstelle 000.</p>
+            <div class="input-group">
+                <label>Admin Web-Passwort</label>
+                <input type="password" id="pass1" placeholder="••••••••••••">
+                <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+            </div>
+            <div class="input-group">
+                <label>Passwort wiederholen</label>
+                <input type="password" id="pass2" placeholder="••••••••••••">
+            </div>
+            <div class="password-rules" id="passRules">
+                <div class="rule" data-rule="len">12+ Zeichen</div>
+                <div class="rule" data-rule="upper">Großbuchstaben</div>
+                <div class="rule" data-rule="lower">Kleinbuchstaben</div>
+                <div class="rule" data-rule="num">Zahl</div>
+                <div class="rule" data-rule="special">Sonderzeichen</div>
+                <div class="rule" data-rule="match">Passwörter gleich</div>
+            </div>
+            <div class="btn-container">
+                <button class="primary" id="btn3" onclick="startSetup()" disabled>Setup ausführen</button>
+            </div>
+        </div>
+
+        <!-- Step 4: Progress -->
+        <div class="step" id="step4">
+            <h1>Setup läuft...</h1>
+            <div class="progress-ring-container">
+                <svg class="ring" viewBox="0 0 120 120">
+                    <circle class="ring-bg" cx="60" cy="60" r="50"></circle>
+                    <circle class="ring-fill" id="ringFill" cx="60" cy="60" r="50"></circle>
+                </svg>
+            </div>
+            <div id="log-container"></div>
+        </div>
+
+        <!-- Step 5: Finish -->
+        <div class="step" id="step5">
+            <svg class="checkmark-svg" viewBox="0 0 52 52">
+                <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+                <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+            </svg>
+            <h1>Setup abgeschlossen</h1>
+            <div class="finish-card">
+                <div class="info-row">
+                    <span>Admin URL:</span>
+                    <span class="val" id="resUrl">https://...</span>
+                </div>
+                <div class="info-row">
+                    <span>Admin SIP Passwort:</span>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span class="val" id="sipPass" style="filter: blur(5px);">••••••••</span>
+                        <button class="copy-btn" id="toggleSip" title="Anzeigen">👁️</button>
+                        <button class="copy-btn" id="copySip" title="Kopieren">📋</button>
+                    </div>
+                </div>
+            </div>
+            <p style="font-size: 13px;">Dieses SIP Passwort wird nur jetzt angezeigt. Bitte sicher aufbewahren.</p>
+            <div class="btn-container">
+                <button class="primary" onclick="goToAdmin()">Zum Admin Login</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let currentStep = 1;
+        const state = {
+            fqdn: '',
+            pass: '',
+            sipPass: ''
+        };
+
+        // Welcome list animation
+        document.querySelectorAll('.list-item').forEach((item, i) => {
+            setTimeout(() => item.classList.add('show'), 500 + i * 150);
+        });
+
+        function nextStep(step) {
+            const prev = document.getElementById(`step${currentStep}`);
+            const next = document.getElementById(`step${step}`);
+            
+            prev.classList.add('exit');
+            prev.classList.remove('active');
+            
+            setTimeout(() => {
+                next.classList.add('active');
+                currentStep = step;
+                updateHeader();
+            }, 50);
+        }
+
+        function updateHeader() {
+            const progress = ((currentStep - 1) / 4) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+            document.getElementById('stepIndicator').innerText = `Schritt ${currentStep} von 5`;
+        }
+
+        // Step 2 Logic: DNS Check
+        let dnsTimeout;
+        const fqdnInput = document.getElementById('fqdnInput');
+        const dnsStatus = document.getElementById('dnsStatus');
+        const btn2 = document.getElementById('btn2');
+
+        fqdnInput.addEventListener('input', e => {
+            state.fqdn = e.target.value.trim();
+            dnsStatus.innerHTML = '';
+            btn2.disabled = true;
+
+            if (state.fqdn.length < 4) return;
+
+            clearTimeout(dnsTimeout);
+            dnsTimeout = setTimeout(checkDNS, 800);
+        });
+
+        async function checkDNS() {
+            dnsStatus.innerHTML = '<span class="spin">⏳</span> DNS Check läuft...';
+            try {
+                const res = await fetch('/api/check-dns', {
+                    method: 'POST',
+                    body: JSON.stringify({ fqdn: state.fqdn })
+                });
+                const data = await res.json();
+                
+                if (data.match) {
+                    dnsStatus.innerHTML = '✅ DNS zeigt auf diese VM (' + data.public_ip + ')';
+                    btn2.disabled = false;
+                } else {
+                    dnsStatus.innerHTML = '⚠️ DNS zeigt auf ' + data.resolved_ip + ', erwartet ' + data.public_ip + '. <span style="text-decoration: underline; cursor: pointer" onclick="document.getElementById(\'btn2\').disabled=false">Trotzdem fortfahren?</span>';
+                }
+            } catch (err) {
+                dnsStatus.innerHTML = '❌ Fehler beim DNS Check.';
+            }
+        }
+
+        // Step 3 Logic: Password Strength
+        const p1 = document.getElementById('pass1');
+        const p2 = document.getElementById('pass2');
+        const sFill = document.getElementById('strengthFill');
+        const btn3 = document.getElementById('btn3');
+
+        const validate = () => {
+            const val = p1.value;
+            const rules = {
+                len: val.length >= 12,
+                upper: /[A-Z]/.test(val),
+                lower: /[a-z]/.test(val),
+                num: /[0-9]/.test(val),
+                special: /[^a-zA-Z0-9]/.test(val),
+                match: val === p2.value && val.length > 0
+            };
+
+            let score = 0;
+            Object.keys(rules).forEach(r => {
+                const el = document.querySelector(`[data-rule="${r}"]`);
+                if (rules[r]) {
+                    el.classList.add('ok');
+                    if (r !== 'match') score++;
+                } else {
+                    el.classList.remove('ok');
+                }
+            });
+
+            const colors = ['#f28b82', '#f28b82', '#fbbc04', '#fbbc04', '#81c995', '#34a853'];
+            sFill.style.width = (score / 5) * 100 + '%';
+            sFill.style.background = colors[score];
+
+            btn3.disabled = !Object.values(rules).every(v => v);
+            state.pass = val;
+        };
+
+        p1.addEventListener('input', validate);
+        p2.addEventListener('input', validate);
+
+        // Step 4 Logic: Setup execution & SSE
+        async function startSetup() {
+            nextStep(4);
+            
+            // Start the setup process
+            fetch('/api/setup', {
+                method: 'POST',
+                body: JSON.stringify({ fqdn: state.fqdn, admin_password: state.pass })
+            });
+
+            const ev = new EventSource('/api/setup-progress');
+            const logBox = document.getElementById('log-container');
+            const ringFill = document.getElementById('ringFill');
+            let logCount = 0;
+            const totalLogs = 7;
+
+            ev.onmessage = e => {
+                if (e.data.includes('SIP_PASSWORD:')) {
+                    state.sipPass = e.data.split(':')[1];
+                    return;
+                }
+
+                const entry = document.createElement('div');
+                entry.className = 'log-entry';
+                entry.innerText = e.data;
+                logBox.appendChild(entry);
+                logBox.scrollTop = logBox.scrollHeight;
+
+                logCount++;
+                const offset = 314.159 - (Math.min(logCount, totalLogs) / totalLogs) * 314.159;
+                ringFill.style.strokeDashoffset = offset;
+
+                if (e.data.includes('Setup abgeschlossen')) {
+                    ev.close();
+                    setTimeout(finishSetup, 1500);
+                }
+            };
+        }
+
+        function finishSetup() {
+            document.getElementById('resUrl').innerText = `https://${state.fqdn}/admin`;
+            document.getElementById('sipPass').innerText = state.sipPass;
+            nextStep(5);
+        }
+
+        // Step 5 Logic
+        document.getElementById('toggleSip').onclick = e => {
+            const el = document.getElementById('sipPass');
+            if (el.style.filter === 'blur(5px)') {
+                el.style.filter = 'none';
+                e.target.innerText = '🔒';
+            } else {
+                el.style.filter = 'blur(5px)';
+                e.target.innerText = '👁️';
+            }
+        };
+
+        document.getElementById('copySip').onclick = () => {
+            navigator.clipboard.writeText(state.sipPass);
+            const btn = document.getElementById('copySip');
+            btn.innerText = '✅';
+            setTimeout(() => btn.innerText = '📋', 1000);
+        };
+
+        function goToAdmin() {
+            window.location.href = `https://${state.fqdn}/admin`;
+        }
+    </script>
+</body>
+</html>
