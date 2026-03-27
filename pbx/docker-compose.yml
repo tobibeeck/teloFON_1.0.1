@@ -49,6 +49,10 @@ services:
       - redis
     environment:
       - LOKI_URL=http://loki:3100
+      - DATABASE_URL=${DATABASE_URL}
+      - JWT_SECRET=${JWT_SECRET}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_HOST=redis
     env_file: .env
     networks:
       - pbx-net
@@ -191,4 +195,5 @@ services:
 
 networks:
   pbx-net:
+    name: pbx-net
     driver: bridge
