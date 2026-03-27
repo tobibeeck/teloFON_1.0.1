@@ -67,7 +67,7 @@ def run_setup(data):
         # Actually, let's use subprocess to be sure we have the same environment as setup.sh
         admin_password_hash = subprocess.check_output([
             "python3", "-c", 
-            f"import bcrypt; print(bcrypt.hashpw(b'{admin_password}'.encode('utf-8'), bcrypt.gensalt()).decode())"
+            f"import bcrypt; print(bcrypt.hashpw('{admin_password}'.encode('utf-8'), bcrypt.gensalt()).decode())"
         ]).decode().strip()
 
         # PostgreSQL configuration
