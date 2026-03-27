@@ -19,15 +19,27 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-if ! command -v docker &> /dev/null; then
-    echo -e "${RED}Error: Docker is not installed${NC}"
-    exit 1
-fi
+# Function to check and install tools
+check_and_install() {
+    local tool=$1
+    local install_cmd=$2
+    if ! command -v "$tool" &> /dev/null; then
+        [[ "$APT_UPDATED" != "true" ]] && echo -e "Updating apt..." && apt update -y && APT_UPDATED=true
+        echo -e "${YELLOW}Installing $tool...${NC}"
+        if eval "$install_cmd"; then
+            echo -e "${GREEN}$tool installed successfully.${NC}"
+        else
+            echo -e "${RED}Error: Failed to install $tool.${NC}"
+            exit 1
+        fi
+    else
+        echo -e "${GREEN}$tool is already installed.${NC}"
+    fi
+}
 
-if ! command -v git &> /dev/null; then
-    echo -e "${RED}Error: Git is not installed${NC}"
-    exit 1
-fi
+check_and_install "curl" "apt install curl -y"
+check_and_install "git" "apt install git -y"
+check_and_install "docker" "curl -fsSL https://get.docker.com | sh && systemctl enable docker && systemctl start docker"
 
 if [[ ! -f "docker-compose.yml" ]]; then
     echo -e "${RED}Error: Script must be run from the pbx/ project folder${NC}"
