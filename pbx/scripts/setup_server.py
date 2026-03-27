@@ -67,13 +67,21 @@ def run_setup(data):
         # Actually, let's use subprocess to be sure we have the same environment as setup.sh
         admin_password_hash = subprocess.check_output([
             "python3", "-c", 
-            f"import bcrypt; print(bcrypt.hashpw(b'{admin_password}', bcrypt.gensalt()).decode())"
+            f"import bcrypt; print(bcrypt.hashpw(b'{admin_password}'.encode('utf-8'), bcrypt.gensalt()).decode())"
         ]).decode().strip()
+
+        # PostgreSQL configuration
+        postgres_user = "telofon"
+        postgres_db = "telofon"
+        database_url = f"postgresql://{postgres_user}:{postgres_password}@postgres:5432/{postgres_db}"
 
         log_progress(".env wird geschrieben...")
         env_content = f"""FQDN={fqdn}
 PUBLIC_IP={get_public_ip()}
+POSTGRES_DB={postgres_db}
+POSTGRES_USER={postgres_user}
 POSTGRES_PASSWORD={postgres_password}
+DATABASE_URL={database_url}
 REDIS_PASSWORD={redis_password}
 JWT_SECRET={jwt_secret}
 FS_DEFAULT_PASSWORD={fs_default_password}
@@ -82,8 +90,6 @@ MINIO_ROOT_USER=pbxadmin
 MINIO_ROOT_PASSWORD={minio_root_password}
 ADMIN_PASSWORD_HASH={admin_password_hash}
 ADMIN_SIP_PASSWORD={admin_sip_password}
-SUPABASE_ANON_KEY=placeholder_anon_key
-SUPABASE_SERVICE_ROLE_KEY=placeholder_service_role_key
 """
         with open(ENV_FILE, "w") as f:
             f.write(env_content)

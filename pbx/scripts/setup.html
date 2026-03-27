@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="de">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -35,7 +36,7 @@
             --radius-md: 12px;
             --radius-lg: 16px;
             --radius-xl: 24px;
-            
+
             --bezier: cubic-bezier(0.2, 0, 0, 1);
         }
 
@@ -68,8 +69,8 @@
         }
 
         .header-logo {
-            width: 36px;
-            height: 36px;
+            width: 50px;
+            height: 50px;
             object-fit: contain;
         }
 
@@ -134,23 +135,30 @@
             transform: translateX(-100%);
         }
 
-        h1 { 
-            font-size: 28px; 
-            font-weight: 500; 
+        h1 {
+            font-size: 28px;
+            font-weight: 500;
             color: var(--color-text-primary);
             animation: slideIn 400ms var(--bezier) forwards;
         }
 
-        p { 
-            color: var(--color-text-secondary); 
-            line-height: 1.6; 
+        p {
+            color: var(--color-text-secondary);
+            line-height: 1.6;
             animation: slideIn 400ms 100ms var(--bezier) forwards;
             opacity: 0;
         }
 
         @keyframes slideIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* Step Icons */
@@ -241,17 +249,41 @@
             flex-shrink: 0;
         }
 
-        .msg-info { background: var(--color-info-bg); color: var(--color-info-text); }
-        .msg-info .status-dot { background: var(--color-info); }
-        
-        .msg-success { background: var(--color-success-bg); color: var(--color-success-text); }
-        .msg-success .status-dot { background: var(--color-success); }
-        
-        .msg-warning { background: var(--color-warning-bg); color: var(--color-warning-text); }
-        .msg-warning .status-dot { background: var(--color-warning); }
+        .msg-info {
+            background: var(--color-info-bg);
+            color: var(--color-info-text);
+        }
 
-        .msg-error { background: var(--color-error-bg); color: var(--color-error-text); }
-        .msg-error .status-dot { background: var(--color-error); }
+        .msg-info .status-dot {
+            background: var(--color-info);
+        }
+
+        .msg-success {
+            background: var(--color-success-bg);
+            color: var(--color-success-text);
+        }
+
+        .msg-success .status-dot {
+            background: var(--color-success);
+        }
+
+        .msg-warning {
+            background: var(--color-warning-bg);
+            color: var(--color-warning-text);
+        }
+
+        .msg-warning .status-dot {
+            background: var(--color-warning);
+        }
+
+        .msg-error {
+            background: var(--color-error-bg);
+            color: var(--color-error-text);
+        }
+
+        .msg-error .status-dot {
+            background: var(--color-error);
+        }
 
         /* Welcome List */
         .welcome-list {
@@ -277,7 +309,12 @@
             transition: all 300ms var(--bezier);
         }
 
-        .dot-primary { width: 6px; height: 6px; background: var(--color-primary); border-radius: 50%; }
+        .dot-primary {
+            width: 6px;
+            height: 6px;
+            background: var(--color-primary);
+            border-radius: 50%;
+        }
 
         /* Password Rules */
         .password-rules {
@@ -289,9 +326,21 @@
             animation: slideIn 400ms 300ms var(--bezier) forwards;
         }
 
-        .rule { display: flex; align-items: center; gap: 8px; color: var(--color-text-disabled); transition: color 150ms var(--bezier); }
-        .rule.ok { color: var(--color-success-text); }
-        .rule.ok svg { stroke: var(--color-success); }
+        .rule {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--color-text-disabled);
+            transition: color 150ms var(--bezier);
+        }
+
+        .rule.ok {
+            color: var(--color-success-text);
+        }
+
+        .rule.ok svg {
+            stroke: var(--color-success);
+        }
 
         /* Progress Step */
         #log-container {
@@ -325,7 +374,11 @@
             animation: spin 1s linear infinite;
         }
 
-        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
 
         /* Finish Info Card */
         .info-card {
@@ -345,7 +398,11 @@
             font-size: 14px;
         }
 
-        .info-val { font-weight: 500; font-family: monospace; color: var(--color-text-primary); }
+        .info-val {
+            font-weight: 500;
+            font-family: monospace;
+            color: var(--color-text-primary);
+        }
 
         .btn-icon {
             background: transparent;
@@ -357,10 +414,12 @@
             transition: background 150ms;
         }
 
-        .btn-icon:hover { background: rgba(26, 115, 232, 0.1); }
-
+        .btn-icon:hover {
+            background: rgba(26, 115, 232, 0.1);
+        }
     </style>
 </head>
+
 <body>
     <div class="progress-bar-container">
         <div class="progress-bar-fill" id="progressBar"></div>
@@ -376,12 +435,21 @@
         <div class="step active" id="step1">
             <img src="assets/brand/teloFON_Logo.svg" alt="teloFON" class="step-icon-center">
             <h1 style="text-align: center;">Setup Wizard</h1>
-            <p style="text-align: center;">Willkommen bei teloFON. Wir richten nun deine PBX Anlage ein. Der Vorgang dauert ca. 2 Minuten.</p>
+            <p style="text-align: center;">Willkommen bei teloFON. Wir richten nun deine PBX Anlage ein. Der Vorgang
+                dauert ca. 2 Minuten.</p>
             <div class="welcome-list">
-                <div class="list-item"><div class="dot-primary"></div>SSL Zertifikat wird automatisch erstellt</div>
-                <div class="list-item"><div class="dot-primary"></div>Alle Secrets werden sicher generiert</div>
-                <div class="list-item"><div class="dot-primary"></div>FreeSwitch wird konfiguriert</div>
-                <div class="list-item"><div class="dot-primary"></div>Admin Nebenstelle 000 wird angelegt</div>
+                <div class="list-item">
+                    <div class="dot-primary"></div>SSL Zertifikat wird automatisch erstellt
+                </div>
+                <div class="list-item">
+                    <div class="dot-primary"></div>Alle Secrets werden sicher generiert
+                </div>
+                <div class="list-item">
+                    <div class="dot-primary"></div>FreeSwitch wird konfiguriert
+                </div>
+                <div class="list-item">
+                    <div class="dot-primary"></div>Admin Nebenstelle 000 wird angelegt
+                </div>
             </div>
             <div style="display: flex; justify-content: center; margin-top: 1rem;">
                 <button class="btn-primary" onclick="nextStep(2)">Setup starten</button>
@@ -405,7 +473,8 @@
         <!-- Step 3: Admin -->
         <div class="step" id="step3">
             <h1>Admin Account</h1>
-            <p>Lege das Administrator-Passwort für das Web-Interface fest. Dies schützt deine Anlage vor unbefugtem Zugriff.</p>
+            <p>Lege das Administrator-Passwort für das Web-Interface fest. Dies schützt deine Anlage vor unbefugtem
+                Zugriff.</p>
             <div class="input-group">
                 <div class="input-label">Admin Web-Passwort</div>
                 <input type="password" id="pass1" placeholder="••••••••••••">
@@ -415,12 +484,30 @@
                 <input type="password" id="pass2" placeholder="••••••••••••">
             </div>
             <div class="password-rules">
-                <div class="rule" data-rule="len"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> 12+ Zeichen</div>
-                <div class="rule" data-rule="upper"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Großbuchstaben</div>
-                <div class="rule" data-rule="lower"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Kleinbuchstaben</div>
-                <div class="rule" data-rule="num"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Zahl</div>
-                <div class="rule" data-rule="special"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Sonderzeichen</div>
-                <div class="rule" data-rule="match"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Identisch</div>
+                <div class="rule" data-rule="len"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg> 12+ Zeichen</div>
+                <div class="rule" data-rule="upper"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg> Großbuchstaben</div>
+                <div class="rule" data-rule="lower"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg> Kleinbuchstaben</div>
+                <div class="rule" data-rule="num"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg> Zahl</div>
+                <div class="rule" data-rule="special"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg> Sonderzeichen</div>
+                <div class="rule" data-rule="match"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg> Identisch</div>
             </div>
             <div style="display: flex; justify-content: flex-end;">
                 <button class="btn-primary" id="btn3" onclick="startSetup()" disabled>Setup ausführen</button>
@@ -440,8 +527,10 @@
         <!-- Step 5: Finish -->
         <div class="step" id="step5">
             <svg class="step-icon-center" viewBox="0 0 52 52" style="width:60px; height:60px;">
-                <circle cx="26" cy="26" r="25" fill="none" stroke="var(--color-success)" stroke-width="2" style="stroke-dasharray: 166; stroke-dashoffset: 0;"></circle>
-                <path fill="none" stroke="var(--color-success)" stroke-width="4" d="M14.1 27.2l7.1 7.2 16.7-16.8" style="stroke-dasharray: 48; stroke-dashoffset: 0;"></path>
+                <circle cx="26" cy="26" r="25" fill="none" stroke="var(--color-success)" stroke-width="2"
+                    style="stroke-dasharray: 166; stroke-dashoffset: 0;"></circle>
+                <path fill="none" stroke="var(--color-success)" stroke-width="4" d="M14.1 27.2l7.1 7.2 16.7-16.8"
+                    style="stroke-dasharray: 48; stroke-dashoffset: 0;"></path>
             </svg>
             <h1 style="text-align: center;">Abgeschlossen</h1>
             <div class="info-card">
@@ -491,10 +580,10 @@
         function nextStep(step) {
             const prev = document.getElementById(`step${currentStep}`);
             const next = document.getElementById(`step${step}`);
-            
+
             prev.classList.add('exit');
             prev.classList.remove('active');
-            
+
             setTimeout(() => {
                 next.classList.add('active');
                 currentStep = step;
@@ -527,7 +616,7 @@
                     body: JSON.stringify({ fqdn: state.fqdn })
                 });
                 const data = await res.json();
-                
+
                 if (data.match) {
                     dnsStatus.innerHTML = `<div class="status-msg msg-success"><div class="status-dot"></div>DNS zeigt korrekt auf ${data.public_ip}</div>`;
                     btn2.disabled = false;
@@ -635,4 +724,5 @@
         updateUI();
     </script>
 </body>
+
 </html>

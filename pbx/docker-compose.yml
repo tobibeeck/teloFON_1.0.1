@@ -44,7 +44,7 @@ services:
     container_name: pbx-api
     restart: unless-stopped
     depends_on:
-      - supabase-db
+      - postgres
       - redis
     environment:
       - LOKI_URL=http://loki:3100
@@ -66,7 +66,7 @@ services:
     container_name: config-gen
     restart: unless-stopped
     depends_on:
-      - supabase-db
+      - postgres
     volumes:
       - ./freeswitch/conf:/etc/freeswitch:rw
     env_file: .env
@@ -82,7 +82,7 @@ services:
     container_name: provisioning
     restart: unless-stopped
     depends_on:
-      - supabase-db
+      - postgres
     env_file: .env
     networks:
       - pbx-net
@@ -130,17 +130,22 @@ services:
       options:
         loki-url: "http://loki:3100/loki/api/v1/push"
 
-  supabase-db:
-    image: supabase/postgres:15
-    container_name: pbx-db
-    restart: unless-stopped
-    environment:
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+  # Standard PostgreSQL (Replaced Supabase)
+  postgres:
+    image: postgres:16-alpine
+    networks: [pbx-net]
     volumes:
       - ./data/postgres:/var/lib/postgresql/data
-    env_file: .env
-    networks:
-      - pbx-net
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: telofon
+      POSTGRES_USER: telofon
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U telofon"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   redis:
     image: redis:7-alpine
