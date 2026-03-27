@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   traefik:
     image: traefik:v3
@@ -26,7 +24,7 @@ services:
     env_file: .env
 
   freeswitch:
-    image: freeswitch/freeswitch:latest
+    image: safarov/freeswitch:latest
     container_name: freeswitch
     restart: unless-stopped
     network_mode: host

@@ -68,7 +68,9 @@
         }
 
         .header-logo {
-            height: 32px;
+            width: 36px;
+            height: 36px;
+            object-fit: contain;
         }
 
         .step-indicator {
@@ -154,8 +156,8 @@
         /* Step Icons */
         .step-icon-center {
             align-self: center;
-            width: 80px;
-            height: 80px;
+            width: 220px;
+            height: auto;
             margin-bottom: 8px;
             animation: slideIn 400ms var(--bezier) forwards;
         }
@@ -365,14 +367,14 @@
     </div>
 
     <header>
-        <img src="assets/brand/teloFON_Logo.svg" alt="teloFON" class="header-logo">
+        <img src="assets/brand/teloFON_Icon_Single.png" alt="teloFON" class="header-logo">
         <div class="step-indicator" id="stepIndicator">Schritt 1 von 5</div>
     </header>
 
     <main>
         <!-- Step 1: Welcome -->
         <div class="step active" id="step1">
-            <img src="assets/brand/teloFON_Icon_Single.png" alt="Icon" class="step-icon-center">
+            <img src="assets/brand/teloFON_Logo.svg" alt="teloFON" class="step-icon-center">
             <h1 style="text-align: center;">Setup Wizard</h1>
             <p style="text-align: center;">Willkommen bei teloFON. Wir richten nun deine PBX Anlage ein. Der Vorgang dauert ca. 2 Minuten.</p>
             <div class="welcome-list">
