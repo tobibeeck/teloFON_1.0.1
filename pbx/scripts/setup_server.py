@@ -139,6 +139,16 @@ ADMIN_SIP_PASSWORD={admin_sip_password}
         
         # Schedule shutdown
         def shutdown():
+            log_progress("Deaktiviere Autologin...")
+            autologin_conf = "/etc/systemd/system/getty@tty1.service.d/autologin.conf"
+            try:
+                if os.path.exists(autologin_conf):
+                    os.remove(autologin_conf)
+                    subprocess.run(["systemctl", "daemon-reload"], check=False)
+                    subprocess.run(["systemctl", "restart", "getty@tty1"], check=False)
+            except Exception as e:
+                print(f"Error deactivating autologin: {e}")
+            
             time.sleep(5)
             os._exit(0)
         threading.Thread(target=shutdown).start()
