@@ -472,8 +472,6 @@
             <div class="input-group">
                 <div class="input-label">FQDN</div>
                 <input type="text" id="fqdnInput" placeholder="pbx.firma.at" spellcheck="false">
-                <div class="input-label" style="margin-top: 8px;">Let's Encrypt E-Mail</div>
-                <input type="email" id="emailInput" placeholder="admin@firma.at" spellcheck="false">
                 <div id="dnsStatusContainer"></div>
             </div>
             <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
@@ -564,7 +562,6 @@
         let currentStep = 1;
         const state = {
             fqdn: '',
-            email: '',
             pass: '',
             sipPass: ''
         };
@@ -606,22 +603,13 @@
             validateStep2();
         });
 
-        const emailInput = document.getElementById('emailInput');
-        emailInput.addEventListener('input', e => {
-            state.email = e.target.value.trim().toLowerCase();
-            validateStep2();
-        });
-
-        function validateEmail(email) {
-            return email.length > 5 && email.includes('@') && email.includes('.');
-        }
 
         function validateStep2() {
             dnsStatus.innerHTML = '';
             btn2.disabled = true;
 
-            if (state.fqdn.length < 4 || !validateEmail(state.email)) return;
-
+            if (state.fqdn.length < 4) return;
+            
             clearTimeout(dnsTimeout);
             dnsTimeout = setTimeout(checkDNS, 800);
         }
@@ -693,7 +681,6 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     fqdn: state.fqdn,
-                    acme_email: state.email,
                     admin_password: state.pass
                 })
             });

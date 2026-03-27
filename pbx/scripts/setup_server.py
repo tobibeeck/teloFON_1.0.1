@@ -51,7 +51,6 @@ def run_setup(data):
     global setup_finished
     try:
         fqdn = data.get("fqdn")
-        acme_email = data.get("acme_email")
         admin_password = data.get("admin_password")
         
         log_progress("Secrets werden generiert...")
@@ -95,7 +94,6 @@ def run_setup(data):
         log_progress(".env wird geschrieben...")
         env_content = f"""FQDN={fqdn}
 PUBLIC_IP={get_public_ip()}
-ACME_EMAIL={acme_email}
 POSTGRES_DB={postgres_db}
 POSTGRES_USER={postgres_user}
 POSTGRES_PASSWORD={postgres_password}

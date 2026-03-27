@@ -25,7 +25,7 @@ entryPoints:
 certificatesResolvers:
   letsencrypt:
     acme:
-      email: ${ACME_EMAIL}
+      email: ssl@telonova.at
       storage: /certs/acme.json
       httpChallenge:
         entryPoint: web
