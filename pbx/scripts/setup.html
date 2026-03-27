@@ -3,20 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PBX Setup Wizard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <title>teloFON Setup Wizard</title>
+    <link rel="icon" type="image/png" href="assets/brand/teloFON_Favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #0f0f0f;
-            --card-bg: #1e1e1e;
-            --text-color: #e8eaed;
-            --accent-color: #1a73e8;
-            --error-color: #f28b82;
-            --success-color: #81c995;
-            --warning-color: #fdd663;
-            --input-bg: #2d2d2d;
-            --transition-speed: 350ms;
-            --bezier: cubic-bezier(0.4, 0, 0.2, 1);
+            --color-primary: #7ED9A8;
+            --color-primary-hover: #5BC48A;
+            --color-primary-text: #0A5C35;
+            --color-secondary: #1A73E8;
+            --color-warning: #FFB300;
+            --color-warning-bg: #FFF8E1;
+            --color-warning-text: #5C3A00;
+            --color-error: #FF7F50;
+            --color-error-bg: #FFF0EB;
+            --color-error-text: #8B2500;
+            --color-success: #7ED9A8;
+            --color-success-bg: #E8F8F0;
+            --color-success-text: #0A5C35;
+            --color-info: #1A73E8;
+            --color-info-bg: #E8F0FE;
+            --color-info-text: #0D47A1;
+            --color-bg: #F7F5F0;
+            --color-surface: #FFFFFF;
+            --color-surface-2: #F0EDE8;
+            --color-border: #E0DDD8;
+            --color-text-primary: #1A1A1A;
+            --color-text-secondary: #4A4A4A;
+            --color-text-disabled: #9B9B9B;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            
+            --bezier: cubic-bezier(0.2, 0, 0, 1);
         }
 
         * {
@@ -28,8 +48,8 @@
 
         body {
             font-family: 'Google Sans', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            background-color: var(--color-bg);
+            color: var(--color-text-primary);
             height: 100vh;
             overflow: hidden;
             display: flex;
@@ -47,17 +67,14 @@
             z-index: 10;
         }
 
-        .logo {
-            font-size: 24px;
-            font-weight: 700;
-            background: linear-gradient(45deg, var(--accent-color), #8ab4f8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .header-logo {
+            height: 32px;
         }
 
         .step-indicator {
             font-size: 14px;
-            color: #9aa0a6;
+            color: var(--color-text-secondary);
+            font-weight: 500;
         }
 
         .progress-bar-container {
@@ -66,22 +83,22 @@
             left: 0;
             width: 100%;
             height: 4px;
-            background: rgba(255,255,255,0.1);
+            background: var(--color-surface-2);
         }
 
         .progress-bar-fill {
             height: 100%;
-            background: var(--accent-color);
+            background: var(--color-primary);
+            border-radius: 0 999px 999px 0;
             width: 0%;
-            transition: width var(--transition-speed) var(--bezier);
-            box-shadow: 0 0 10px var(--accent-color);
+            transition: width 400ms var(--bezier);
         }
 
         /* Container & Steps */
         main {
             position: relative;
             width: 100%;
-            max-width: 600px;
+            max-width: 560px;
             height: calc(100vh - 120px);
             display: flex;
             justify-content: center;
@@ -91,17 +108,17 @@
         .step {
             position: absolute;
             width: 100%;
-            padding: 40px;
-            background: var(--card-bg);
-            border-radius: 28px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            padding: 2rem;
+            background: var(--color-surface);
+            border: 0.5px solid var(--color-border);
+            border-radius: var(--radius-lg);
             display: flex;
             flex-direction: column;
-            gap: 24px;
+            gap: 1.5rem;
             opacity: 0;
-            transform: translateX(100px);
+            transform: translateX(100%);
             pointer-events: none;
-            transition: all var(--transition-speed) var(--bezier);
+            transition: all 300ms var(--bezier);
         }
 
         .step.active {
@@ -112,83 +129,153 @@
 
         .step.exit {
             opacity: 0;
-            transform: translateX(-100px);
+            transform: translateX(-100%);
         }
 
-        h1 { font-size: 32px; font-weight: 500; }
-        p { color: #9aa0a6; line-height: 1.5; }
+        h1 { 
+            font-size: 28px; 
+            font-weight: 500; 
+            color: var(--color-text-primary);
+            animation: slideIn 400ms var(--bezier) forwards;
+        }
 
-        /* Welcome Icon Animation */
-        .welcome-icon {
-            width: 80px; height: 80px;
-            background: var(--accent-color);
-            border-radius: 20px;
+        p { 
+            color: var(--color-text-secondary); 
+            line-height: 1.6; 
+            animation: slideIn 400ms 100ms var(--bezier) forwards;
+            opacity: 0;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Step Icons */
+        .step-icon-center {
+            align-self: center;
+            width: 80px;
+            height: 80px;
             margin-bottom: 8px;
+            animation: slideIn 400ms var(--bezier) forwards;
+        }
+
+        /* Components */
+        .btn-primary {
+            background: var(--color-primary);
+            color: var(--color-primary-text);
+            border-radius: var(--radius-md);
+            padding: 10px 24px;
+            font-family: inherit;
+            font-size: 16px;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: all 150ms var(--bezier);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--color-primary-hover);
+            transform: scale(1.01);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary:disabled {
+            background: var(--color-text-disabled);
+            color: white;
+            cursor: not-allowed;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            opacity: 0;
+            animation: slideIn 400ms 200ms var(--bezier) forwards;
+        }
+
+        .input-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--color-text-secondary);
+            margin-left: 4px;
+        }
+
+        input {
+            background: var(--color-surface-2);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: 12px 16px;
+            color: var(--color-text-primary);
+            font-family: inherit;
+            font-size: 14px;
+            outline: none;
+            transition: all 150ms var(--bezier);
+        }
+
+        input:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(126, 217, 168, 0.2);
+        }
+
+        /* Status Messages */
+        .status-msg {
             display: flex;
             align-items: center;
-            justify-content: center;
-            animation: pulse 3s infinite ease-in-out;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            animation: slideIn 300ms var(--bezier) forwards;
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(26, 115, 232, 0.4); }
-            70% { transform: scale(1.05); box-shadow: 0 0 0 20px rgba(26, 115, 232, 0); }
-            100% { transform: scale(1); }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .msg-info { background: var(--color-info-bg); color: var(--color-info-text); }
+        .msg-info .status-dot { background: var(--color-info); }
+        
+        .msg-success { background: var(--color-success-bg); color: var(--color-success-text); }
+        .msg-success .status-dot { background: var(--color-success); }
+        
+        .msg-warning { background: var(--color-warning-bg); color: var(--color-warning-text); }
+        .msg-warning .status-dot { background: var(--color-warning); }
+
+        .msg-error { background: var(--color-error-bg); color: var(--color-error-text); }
+        .msg-error .status-dot { background: var(--color-error); }
+
+        /* Welcome List */
+        .welcome-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 8px;
         }
 
         .list-item {
             display: flex;
             align-items: center;
             gap: 12px;
+            font-size: 15px;
+            color: var(--color-text-secondary);
             opacity: 0;
-            transform: translateY(10px);
+            transform: translateY(8px);
         }
 
         .list-item.show {
             opacity: 1;
             transform: translateY(0);
-            transition: all 400ms var(--bezier);
+            transition: all 300ms var(--bezier);
         }
 
-        .dot { width: 8px; height: 8px; background: var(--accent-color); border-radius: 50%; }
-
-        /* Form Elements */
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            position: relative;
-        }
-
-        label { font-size: 14px; color: var(--accent-color); font-weight: 500; margin-left: 4px; }
-
-        input {
-            background: var(--input-bg);
-            border: 2px solid transparent;
-            border-radius: 12px;
-            padding: 16px;
-            color: var(--text-color);
-            font-family: inherit;
-            font-size: 16px;
-            outline: none;
-            transition: all 0.2s;
-        }
-
-        input:focus {
-            border-color: var(--accent-color);
-            background: #252627;
-        }
-
-        .dns-status {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 14px;
-            min-height: 24px;
-        }
-
-        .spin { animation: spin 1s linear infinite; }
-        @keyframes spin { from {transform: rotate(0deg);} to {transform: rotate(360deg);} }
+        .dot-primary { width: 6px; height: 6px; background: var(--color-primary); border-radius: 50%; }
 
         /* Password Rules */
         .password-rules {
@@ -196,81 +283,57 @@
             grid-template-columns: 1fr 1fr;
             gap: 8px;
             font-size: 13px;
+            opacity: 0;
+            animation: slideIn 400ms 300ms var(--bezier) forwards;
         }
 
-        .rule { display: flex; align-items: center; gap: 6px; color: #5f6368; transition: color 0.3s; }
-        .rule.ok { color: var(--success-color); }
-        .rule.ok::before { content: "✓"; font-weight: bold; }
+        .rule { display: flex; align-items: center; gap: 8px; color: var(--color-text-disabled); transition: color 150ms var(--bezier); }
+        .rule.ok { color: var(--color-success-text); }
+        .rule.ok svg { stroke: var(--color-success); }
 
-        .strength-bar {
-            height: 4px;
-            background: #3c4043;
-            border-radius: 2px;
-            overflow: hidden;
-            margin-top: -8px;
-        }
-
-        .strength-fill {
-            height: 100%;
-            width: 0%;
-            transition: all 0.3s;
-        }
-
-        /* Progress Ring */
-        .progress-ring-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 20px 0;
-        }
-
-        .ring {
-            width: 120px;
-            height: 120px;
-        }
-
-        .ring-bg { fill: none; stroke: #3c4043; stroke-width: 8; }
-        .ring-fill {
-            fill: none;
-            stroke: var(--accent-color);
-            stroke-width: 8;
-            stroke-linecap: round;
-            stroke-dasharray: 314.159;
-            stroke-dashoffset: 314.159;
-            transition: stroke-dashoffset 0.8s var(--bezier);
-            transform: rotate(-90deg);
-            transform-origin: 50% 50%;
-        }
-
+        /* Progress Step */
         #log-container {
-            background: #000;
-            border-radius: 12px;
+            background: var(--color-surface-2);
+            border-radius: var(--radius-md);
             padding: 16px;
-            height: 160px;
+            height: 180px;
             overflow-y: auto;
             font-family: 'Roboto Mono', monospace;
             font-size: 12px;
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 6px;
+            border: 1px solid var(--color-border);
         }
 
         .log-entry {
             opacity: 0;
-            transform: translateY(5px);
-            animation: fadeInLog 0.3s forwards;
+            transform: translateY(4px);
+            animation: slideIn 200ms forwards;
+            color: var(--color-text-secondary);
         }
 
-        @keyframes fadeInLog { to { opacity: 1; transform: translateY(0); } }
+        /* Spinner */
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid var(--color-border);
+            border-top-color: var(--color-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
 
-        /* Finish Card */
-        .finish-card {
-            background: rgba(45, 45, 45, 0.5);
-            padding: 20px;
-            border-radius: 16px;
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Finish Info Card */
+        .info-card {
+            background: var(--color-surface-2);
+            padding: 1.25rem;
+            border-radius: var(--radius-lg);
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 1rem;
+            border: 1px solid var(--color-border);
         }
 
         .info-row {
@@ -280,52 +343,19 @@
             font-size: 14px;
         }
 
-        .val { color: #fff; font-weight: 500; font-family: monospace; }
+        .info-val { font-weight: 500; font-family: monospace; color: var(--color-text-primary); }
 
-        .copy-btn {
+        .btn-icon {
             background: transparent;
             border: none;
-            color: var(--accent-color);
+            color: var(--color-secondary);
             cursor: pointer;
-            font-size: 18px;
             padding: 4px;
+            border-radius: 4px;
+            transition: background 150ms;
         }
 
-        /* Buttons */
-        .btn-container { display: flex; justify-content: flex-end; margin-top: 16px; }
-
-        button.primary {
-            background: var(--accent-color);
-            color: white;
-            border: none;
-            padding: 12px 32px;
-            border-radius: 24px;
-            font-family: inherit;
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        button.primary:hover:not(:disabled) {
-            background: #1967d2;
-            box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
-        }
-
-        button.primary:active { transform: scale(0.97); }
-
-        button.primary:disabled {
-            background: #3c4043;
-            color: #80868b;
-            cursor: not-allowed;
-        }
-
-        /* Checkmark Animation */
-        .checkmark-svg { width: 80px; height: 80px; align-self: center; }
-        .checkmark-circle { stroke: var(--success-color); stroke-width: 2; stroke-dasharray: 166; stroke-dashoffset: 166; animation: draw 0.6s fill forwards; }
-        .checkmark-check { stroke: var(--success-color); stroke-width: 4; stroke-dasharray: 48; stroke-dashoffset: 48; animation: draw 0.3s 0.6s forwards; }
-
-        @keyframes draw { to { stroke-dashoffset: 0; } }
+        .btn-icon:hover { background: rgba(26, 115, 232, 0.1); }
 
     </style>
 </head>
@@ -335,107 +365,103 @@
     </div>
 
     <header>
-        <div class="logo">PBX</div>
+        <img src="assets/brand/teloFON_Logo.svg" alt="teloFON" class="header-logo">
         <div class="step-indicator" id="stepIndicator">Schritt 1 von 5</div>
     </header>
 
     <main>
         <!-- Step 1: Welcome -->
         <div class="step active" id="step1">
-            <div class="welcome-icon">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="white">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
-                </svg>
+            <img src="assets/brand/teloFON_Icon_Single.png" alt="Icon" class="step-icon-center">
+            <h1 style="text-align: center;">Setup Wizard</h1>
+            <p style="text-align: center;">Willkommen bei teloFON. Wir richten nun deine PBX Anlage ein. Der Vorgang dauert ca. 2 Minuten.</p>
+            <div class="welcome-list">
+                <div class="list-item"><div class="dot-primary"></div>SSL Zertifikat wird automatisch erstellt</div>
+                <div class="list-item"><div class="dot-primary"></div>Alle Secrets werden sicher generiert</div>
+                <div class="list-item"><div class="dot-primary"></div>FreeSwitch wird konfiguriert</div>
+                <div class="list-item"><div class="dot-primary"></div>Admin Nebenstelle 000 wird angelegt</div>
             </div>
-            <h1>PBX Setup</h1>
-            <p>Willkommen. Dieser Wizard richtet deine PBX Anlage ein. Der Vorgang dauert ca. 2 Minuten.</p>
-            <div id="welcomeList">
-                <div class="list-item"><div class="dot"></div>SSL Zertifikat wird automatisch ausgestellt</div>
-                <div class="list-item"><div class="dot"></div>Alle Secrets werden sicher generiert</div>
-                <div class="list-item"><div class="dot"></div>FreeSwitch wird konfiguriert</div>
-                <div class="list-item"><div class="dot"></div>Admin Nebenstelle 000 wird angelegt</div>
-            </div>
-            <div class="btn-container">
-                <button class="primary" onclick="nextStep(2)">Setup starten</button>
+            <div style="display: flex; justify-content: center; margin-top: 1rem;">
+                <button class="btn-primary" onclick="nextStep(2)">Setup starten</button>
             </div>
         </div>
 
         <!-- Step 2: Domain -->
         <div class="step" id="step2">
             <h1>Domain & Netzwerk</h1>
-            <p>Der FQDN wird für das SSL Zertifikat und die SIP Konfiguration verwendet.</p>
+            <p>Dein FQDN wird für die TLS-Verschlüsselung und die SIP-Provider Anmeldung benötigt.</p>
             <div class="input-group">
-                <label>FQDN</label>
-                <input type="text" id="fqdnInput" placeholder="pbx.firma.at" autocomplete="off">
-                <div class="dns-status" id="dnsStatus"></div>
+                <div class="input-label">FQDN</div>
+                <input type="text" id="fqdnInput" placeholder="pbx.firma.at" spellcheck="false">
+                <div id="dnsStatusContainer"></div>
             </div>
-            <div class="btn-container">
-                <button class="primary" id="btn2" onclick="nextStep(3)" disabled>Weiter</button>
+            <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+                <button class="btn-primary" id="btn2" onclick="nextStep(3)" disabled>Weiter</button>
             </div>
         </div>
 
         <!-- Step 3: Admin -->
         <div class="step" id="step3">
             <h1>Admin Account</h1>
-            <p>Der Admin Account ist gleichzeitig die interne Nebenstelle 000.</p>
+            <p>Lege das Administrator-Passwort für das Web-Interface fest. Dies schützt deine Anlage vor unbefugtem Zugriff.</p>
             <div class="input-group">
-                <label>Admin Web-Passwort</label>
+                <div class="input-label">Admin Web-Passwort</div>
                 <input type="password" id="pass1" placeholder="••••••••••••">
-                <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
             </div>
             <div class="input-group">
-                <label>Passwort wiederholen</label>
+                <div class="input-label">Passwort wiederholen</div>
                 <input type="password" id="pass2" placeholder="••••••••••••">
             </div>
-            <div class="password-rules" id="passRules">
-                <div class="rule" data-rule="len">12+ Zeichen</div>
-                <div class="rule" data-rule="upper">Großbuchstaben</div>
-                <div class="rule" data-rule="lower">Kleinbuchstaben</div>
-                <div class="rule" data-rule="num">Zahl</div>
-                <div class="rule" data-rule="special">Sonderzeichen</div>
-                <div class="rule" data-rule="match">Passwörter gleich</div>
+            <div class="password-rules">
+                <div class="rule" data-rule="len"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> 12+ Zeichen</div>
+                <div class="rule" data-rule="upper"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Großbuchstaben</div>
+                <div class="rule" data-rule="lower"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Kleinbuchstaben</div>
+                <div class="rule" data-rule="num"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Zahl</div>
+                <div class="rule" data-rule="special"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Sonderzeichen</div>
+                <div class="rule" data-rule="match"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Identisch</div>
             </div>
-            <div class="btn-container">
-                <button class="primary" id="btn3" onclick="startSetup()" disabled>Setup ausführen</button>
+            <div style="display: flex; justify-content: flex-end;">
+                <button class="btn-primary" id="btn3" onclick="startSetup()" disabled>Setup ausführen</button>
             </div>
         </div>
 
         <!-- Step 4: Progress -->
         <div class="step" id="step4">
-            <h1>Setup läuft...</h1>
-            <div class="progress-ring-container">
-                <svg class="ring" viewBox="0 0 120 120">
-                    <circle class="ring-bg" cx="60" cy="60" r="50"></circle>
-                    <circle class="ring-fill" id="ringFill" cx="60" cy="60" r="50"></circle>
-                </svg>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <div class="spinner"></div>
+                <h1>Installation läuft...</h1>
             </div>
+            <p>Deine Anlage wird nun konfiguriert und die Container gestartet.</p>
             <div id="log-container"></div>
         </div>
 
         <!-- Step 5: Finish -->
         <div class="step" id="step5">
-            <svg class="checkmark-svg" viewBox="0 0 52 52">
-                <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
-                <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+            <svg class="step-icon-center" viewBox="0 0 52 52" style="width:60px; height:60px;">
+                <circle cx="26" cy="26" r="25" fill="none" stroke="var(--color-success)" stroke-width="2" style="stroke-dasharray: 166; stroke-dashoffset: 0;"></circle>
+                <path fill="none" stroke="var(--color-success)" stroke-width="4" d="M14.1 27.2l7.1 7.2 16.7-16.8" style="stroke-dasharray: 48; stroke-dashoffset: 0;"></path>
             </svg>
-            <h1>Setup abgeschlossen</h1>
-            <div class="finish-card">
+            <h1 style="text-align: center;">Abgeschlossen</h1>
+            <div class="info-card">
                 <div class="info-row">
-                    <span>Admin URL:</span>
-                    <span class="val" id="resUrl">https://...</span>
+                    <span style="color: var(--color-text-secondary);">Admin Interface:</span>
+                    <span class="info-val" id="resUrl">https://...</span>
                 </div>
                 <div class="info-row">
-                    <span>Admin SIP Passwort:</span>
+                    <span style="color: var(--color-text-secondary);">SIP Passwort (000):</span>
                     <div style="display: flex; align-items: center; gap: 8px;">
-                        <span class="val" id="sipPass" style="filter: blur(5px);">••••••••</span>
-                        <button class="copy-btn" id="toggleSip" title="Anzeigen">👁️</button>
-                        <button class="copy-btn" id="copySip" title="Kopieren">📋</button>
+                        <span class="info-val" id="sipPass" style="filter: blur(4px);">••••••••</span>
+                        <button class="btn-icon" id="toggleSip">👁️</button>
+                        <button class="btn-icon" id="copySip">📋</button>
                     </div>
                 </div>
             </div>
-            <p style="font-size: 13px;">Dieses SIP Passwort wird nur jetzt angezeigt. Bitte sicher aufbewahren.</p>
-            <div class="btn-container">
-                <button class="primary" onclick="goToAdmin()">Zum Admin Login</button>
+            <div class="status-msg msg-info">
+                <div class="status-dot"></div>
+                Bitte bewahre das SIP Passwort sicher auf. Es wird nur einmalig angezeigt.
+            </div>
+            <div style="display: flex; justify-content: center; margin-top: 1rem;">
+                <button class="btn-primary" onclick="goToAdmin()">Zum Login</button>
             </div>
         </div>
     </main>
@@ -448,9 +474,16 @@
             sipPass: ''
         };
 
-        // Welcome list animation
+        // Header and Progress
+        function updateUI() {
+            const progress = ((currentStep - 1) / 4) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+            document.getElementById('stepIndicator').innerText = `Schritt ${currentStep} von 5`;
+        }
+
+        // Welcome animation
         document.querySelectorAll('.list-item').forEach((item, i) => {
-            setTimeout(() => item.classList.add('show'), 500 + i * 150);
+            setTimeout(() => item.classList.add('show'), 400 + i * 120);
         });
 
         function nextStep(step) {
@@ -463,60 +496,63 @@
             setTimeout(() => {
                 next.classList.add('active');
                 currentStep = step;
-                updateHeader();
+                updateUI();
             }, 50);
         }
 
-        function updateHeader() {
-            const progress = ((currentStep - 1) / 4) * 100;
-            document.getElementById('progressBar').style.width = `${progress}%`;
-            document.getElementById('stepIndicator').innerText = `Schritt ${currentStep} von 5`;
-        }
-
-        // Step 2 Logic: DNS Check
+        // Step 2: DNS Check
         let dnsTimeout;
         const fqdnInput = document.getElementById('fqdnInput');
-        const dnsStatus = document.getElementById('dnsStatus');
+        const dnsStatus = document.getElementById('dnsStatusContainer');
         const btn2 = document.getElementById('btn2');
 
         fqdnInput.addEventListener('input', e => {
-            state.fqdn = e.target.value.trim();
+            state.fqdn = e.target.value.trim().toLowerCase();
             dnsStatus.innerHTML = '';
             btn2.disabled = true;
 
             if (state.fqdn.length < 4) return;
-
             clearTimeout(dnsTimeout);
             dnsTimeout = setTimeout(checkDNS, 800);
         });
 
         async function checkDNS() {
-            dnsStatus.innerHTML = '<span class="spin">⏳</span> DNS Check läuft...';
+            dnsStatus.innerHTML = '<div class="status-msg msg-info"><div class="spinner" style="width:14px; height:14px; border-width:2px;"></div>Prüfe DNS Auflösung...</div>';
             try {
                 const res = await fetch('/api/check-dns', {
                     method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ fqdn: state.fqdn })
                 });
                 const data = await res.json();
                 
                 if (data.match) {
-                    dnsStatus.innerHTML = '✅ DNS zeigt auf diese VM (' + data.public_ip + ')';
+                    dnsStatus.innerHTML = `<div class="status-msg msg-success"><div class="status-dot"></div>DNS zeigt korrekt auf ${data.public_ip}</div>`;
                     btn2.disabled = false;
                 } else {
-                    dnsStatus.innerHTML = '⚠️ DNS zeigt auf ' + data.resolved_ip + ', erwartet ' + data.public_ip + '. <span style="text-decoration: underline; cursor: pointer" onclick="document.getElementById(\'btn2\').disabled=false">Trotzdem fortfahren?</span>';
+                    dnsStatus.innerHTML = `
+                        <div class="status-msg msg-warning" style="flex-direction: column; align-items: flex-start; gap: 4px;">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div class="status-dot"></div>
+                                DNS Check fehlgeschlagen
+                            </div>
+                            <div style="font-size: 12px; margin-left: 20px;">
+                                Zeigt auf: ${data.resolved_ip}<br>Erwartet: ${data.public_ip}
+                            </div>
+                            <button onclick="document.getElementById('btn2').disabled=false" style="background:none; border:none; color:var(--color-info-text); text-decoration:underline; font-size:12px; cursor:pointer; margin-left:20px;">Ignorieren und Fortfahren</button>
+                        </div>`;
                 }
             } catch (err) {
-                dnsStatus.innerHTML = '❌ Fehler beim DNS Check.';
+                dnsStatus.innerHTML = '<div class="status-msg msg-error"><div class="status-dot"></div>Fehler beim DNS Check</div>';
             }
         }
 
-        // Step 3 Logic: Password Strength
+        // Step 3: Password Strength
         const p1 = document.getElementById('pass1');
         const p2 = document.getElementById('pass2');
-        const sFill = document.getElementById('strengthFill');
         const btn3 = document.getElementById('btn3');
 
-        const validate = () => {
+        function validatePassword() {
             const val = p1.value;
             const rules = {
                 len: val.length >= 12,
@@ -527,63 +563,44 @@
                 match: val === p2.value && val.length > 0
             };
 
-            let score = 0;
             Object.keys(rules).forEach(r => {
                 const el = document.querySelector(`[data-rule="${r}"]`);
-                if (rules[r]) {
-                    el.classList.add('ok');
-                    if (r !== 'match') score++;
-                } else {
-                    el.classList.remove('ok');
-                }
+                if (rules[r]) el.classList.add('ok'); else el.classList.remove('ok');
             });
-
-            const colors = ['#f28b82', '#f28b82', '#fbbc04', '#fbbc04', '#81c995', '#34a853'];
-            sFill.style.width = (score / 5) * 100 + '%';
-            sFill.style.background = colors[score];
 
             btn3.disabled = !Object.values(rules).every(v => v);
             state.pass = val;
-        };
+        }
 
-        p1.addEventListener('input', validate);
-        p2.addEventListener('input', validate);
+        p1.addEventListener('input', validatePassword);
+        p2.addEventListener('input', validatePassword);
 
-        // Step 4 Logic: Setup execution & SSE
+        // Step 4 & 5: Setup
         async function startSetup() {
             nextStep(4);
-            
-            // Start the setup process
             fetch('/api/setup', {
                 method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ fqdn: state.fqdn, admin_password: state.pass })
             });
 
             const ev = new EventSource('/api/setup-progress');
             const logBox = document.getElementById('log-container');
-            const ringFill = document.getElementById('ringFill');
-            let logCount = 0;
-            const totalLogs = 7;
 
             ev.onmessage = e => {
                 if (e.data.includes('SIP_PASSWORD:')) {
                     state.sipPass = e.data.split(':')[1];
                     return;
                 }
-
                 const entry = document.createElement('div');
                 entry.className = 'log-entry';
                 entry.innerText = e.data;
                 logBox.appendChild(entry);
                 logBox.scrollTop = logBox.scrollHeight;
 
-                logCount++;
-                const offset = 314.159 - (Math.min(logCount, totalLogs) / totalLogs) * 314.159;
-                ringFill.style.strokeDashoffset = offset;
-
                 if (e.data.includes('Setup abgeschlossen')) {
                     ev.close();
-                    setTimeout(finishSetup, 1500);
+                    setTimeout(finishSetup, 1200);
                 }
             };
         }
@@ -594,28 +611,26 @@
             nextStep(5);
         }
 
-        // Step 5 Logic
+        // Interactions
         document.getElementById('toggleSip').onclick = e => {
             const el = document.getElementById('sipPass');
-            if (el.style.filter === 'blur(5px)') {
-                el.style.filter = 'none';
-                e.target.innerText = '🔒';
-            } else {
-                el.style.filter = 'blur(5px)';
-                e.target.innerText = '👁️';
-            }
+            const obscured = el.style.filter === 'blur(4px)';
+            el.style.filter = obscured ? 'none' : 'blur(4px)';
+            e.currentTarget.innerText = obscured ? '🔒' : '👁️';
         };
 
-        document.getElementById('copySip').onclick = () => {
+        document.getElementById('copySip').onclick = e => {
             navigator.clipboard.writeText(state.sipPass);
-            const btn = document.getElementById('copySip');
-            btn.innerText = '✅';
-            setTimeout(() => btn.innerText = '📋', 1000);
+            const original = e.currentTarget.innerText;
+            e.currentTarget.innerText = '✅';
+            setTimeout(() => e.currentTarget.innerText = original, 1000);
         };
 
         function goToAdmin() {
             window.location.href = `https://${state.fqdn}/admin`;
         }
+
+        updateUI();
     </script>
 </body>
 </html>
