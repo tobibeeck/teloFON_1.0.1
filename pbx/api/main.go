@@ -36,6 +36,12 @@ func main() {
 		fmt.Fprintf(w, `{"status":"ok","service":"telofon-api"}`)
 	})
 
+	mux.HandleFunc("/api/health", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintf(w, `{"status":"ok","service":"telofon-api"}`)
+	})
+
 	mux.HandleFunc("/api/v1/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
