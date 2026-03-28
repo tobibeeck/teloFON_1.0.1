@@ -149,6 +149,7 @@ services:
     networks: [pbx-net]
     volumes:
       - ./data/postgres:/var/lib/postgresql/data
+      - ./database/migrations:/migrations:ro
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: telofon

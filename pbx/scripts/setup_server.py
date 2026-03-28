@@ -136,6 +136,33 @@ ADMIN_SIP_PASSWORD={admin_sip_password}
         log_progress("Docker Container werden gestartet...")
         subprocess.run(["docker", "compose", "up", "-d"], check=True)
 
+        log_progress("Warte auf Datenbank...")
+        # Simple wait for postgres health
+        max_retries = 30
+        for i in range(max_retries):
+            try:
+                subprocess.run(["docker", "exec", "pbx-postgres-1", "pg_isready", "-U", "telofon"], check=True, capture_output=True)
+                break
+            except:
+                if i == max_retries - 1:
+                    raise Exception("Datenbank nicht erreichbar")
+                time.sleep(2)
+
+        log_progress("Datenbankschema wird initialisiert...")
+        subprocess.run([
+            "docker", "exec", "pbx-postgres-1",
+            "psql", "-U", "telofon", "-d", "telofon",
+            "-f", "/migrations/001_initial.sql"
+        ], check=True)
+
+        log_progress("Admin Account wird angelegt...")
+        admin_sql = f"INSERT INTO admin (extension, web_password_hash, sip_password, totp_enabled) VALUES ('000', '{admin_password_hash}', '{admin_sip_password}', false);"
+        subprocess.run([
+            "docker", "exec", "pbx-postgres-1",
+            "psql", "-U", "telofon", "-d", "telofon",
+            "-c", admin_sql
+        ], check=True)
+
         log_progress("SSL Zertifikat wird angefordert...")
         time.sleep(2) # Simulating wait for Traefik
 
