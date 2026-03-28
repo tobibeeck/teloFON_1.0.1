@@ -9,7 +9,7 @@ services:
     volumes:
       - ./traefik/traefik.yml:/etc/traefik/traefik.yml:ro
       - ./traefik/dynamic:/etc/traefik/dynamic:ro
-      - ./certs:/certs:ro
+      - ./certs:/certs
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
       - pbx-net
@@ -142,7 +142,7 @@ services:
   # Standard PostgreSQL (Replaced Supabase)
   postgres:
     image: postgres:16-alpine
-    networks: [pbx-net]
+    networks: [ pbx-net ]
     volumes:
       - ./data/postgres:/var/lib/postgresql/data
       - ./database/migrations:/migrations:ro
@@ -152,7 +152,7 @@ services:
       POSTGRES_USER: telofon
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U telofon"]
+      test: [ "CMD-SHELL", "pg_isready -U telofon" ]
       interval: 10s
       timeout: 5s
       retries: 5
