@@ -1,3 +1,3 @@
-module github.com/tobibeeck/pbx-api
+module telofon/api
 
-go 1.21
+go 1.22

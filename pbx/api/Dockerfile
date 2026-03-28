@@ -1,5 +1,13 @@
-FROM golang:1.22-alpine
+FROM golang:1.22-alpine AS builder
 WORKDIR /app
+COPY go.mod ./
+RUN go mod download 2/dev/null || true
 COPY . .
-RUN if [ -f go.mod ] && [ "$(ls *.go 2>/dev/null | wc -l)" -gt "0" ]; then go build -o main .; fi
-CMD ["sh", "-c", "if [ -f ./main ]; then ./main; else echo 'Service not yet implemented, sleeping...'; sleep infinity; fi"]
+RUN go build -o main .
+
+FROM alpine:latest
+RUN apk --no-cache add ca-certificates tzdata
+WORKDIR /app
+COPY --from=builder /app/main .
+EXPOSE 8080
+CMD ["./main"]
